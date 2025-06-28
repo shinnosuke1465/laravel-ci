@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/php:7.3-node-browsers
-      - image: cimg/postgres:11.17
+      - image: circleci/postgres:11.6-alpine
         environment:
           POSTGRES_DB: larasns
           POSTGRES_USER: default
@@ -39,6 +39,11 @@ jobs:
           paths:
             - node_modules
       - run: npm run dev
+      - run:
+          name: Add Google public key
+          command: |
+            curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor | sudo tee /usr/share/keyrings/google-linux-signing-keyring.gpg > /dev/null
+            echo "deb [signed-by=/usr/share/keyrings/google-linux-signing-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
       - run:
           name: get ready for postgres
           command: |
